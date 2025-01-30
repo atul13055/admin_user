@@ -1,0 +1,33 @@
+<div class="container mt-5">
+  <div class="card shadow-lg p-4">
+    <div class="card-body text-center">
+      <h2 class="mb-4 text-primary">Scan QR Code to Make Payment</h2>
+      <p class="text-muted">Please scan the QR code below to complete your payment.</p>
+      
+      <div class="d-flex justify-content-center">
+        <div class="border rounded p-3 bg-light">
+          <%# <%= raw RQRCode::QRCode.new("https://payment-link.com?user_id=#{@user.id}").as_svg(module_size: 6) %> 
+          <%= image_tag @qr_code.as_png(size: 300).to_data_url, alt: "User QR Code", class: "img-fluid rounded shadow" %>
+        </div>
+      </div>
+
+      <h3 class="mt-4 text-dark">User Details</h3>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <ul class="list-group">
+            <li class="list-group-item"><strong>Name:</strong> <%= @user.name %></li>
+            <li class="list-group-item"><strong>Email:</strong> <%= @user.email %></li>
+            <li class="list-group-item"><strong>Phone:</strong> <%= @user.mobile %></li>
+            <li class="list-group-item"><strong>Address:</strong> <%= @user.location %></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="mt-4 text-danger">
+        <strong>Disclaimer:</strong> Don't make payment. Still development in progress.
+      </p>
+
+      <a href="http://jharkhandstepuptrust.org" class="btn btn-primary mt-3">Back to Home</a>
+    </div>
+  </div>
+</div>

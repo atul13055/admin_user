@@ -1,0 +1,89 @@
+<div class="container d-flex justify-content-center mt-5">
+  <div class="card shadow-lg p-5 w-100" style="max-width: 700px;">
+    <h2 class="text-center mb-4 text-primary fw-bold">Become a Member</h2>
+
+    <%= form_with(model: @user, local: true, class: 'needs-validation', novalidate: true) do |form| %>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <%= form.label :name, "Full Name", class: 'form-label fw-semibold' %>
+          <%= form.text_field :name, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :location, "Location", class: 'form-label fw-semibold' %>
+          <%= form.text_field :location, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <%= form.label :mobile, "Mobile Number", class: 'form-label fw-semibold' %>
+          <%= form.telephone_field :mobile, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :email, "Email Address", class: 'form-label fw-semibold' %>
+          <%= form.email_field :email, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <%= form.label :profession, "Profession", class: 'form-label fw-semibold' %>
+          <%= form.text_field :profession, class: 'form-control form-control-lg border-0 shadow-sm' %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :age, "Age", class: 'form-label fw-semibold' %>
+          <%= form.number_field :age, class: 'form-control form-control-lg border-0 shadow-sm' %>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <%= form.label :sex, "Gender", class: 'form-label fw-semibold' %>
+          <%= form.select :sex, ['Male', 'Female', 'Other'], { prompt: 'Select Gender' }, class: 'form-select form-select-lg border-0 shadow-sm' %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :height, "Height (cm)", class: 'form-label fw-semibold' %>
+          <%= form.number_field :height, class: 'form-control form-control-lg border-0 shadow-sm' %>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <%= form.label :weight, "Weight (kg)", class: 'form-label fw-semibold' %>
+          <%= form.number_field :weight, class: 'form-control form-control-lg border-0 shadow-sm' %>
+        </div>
+      </div>
+
+      <!-- Hidden field for package_id -->
+      <%= form.hidden_field :package_id, value: @package.id %>
+
+      <!-- Submit Button -->
+      <div class="text-center mt-4">
+        <%= form.submit 'Submit', class: 'btn btn-primary btn-lg px-5 py-3 shadow-sm fw-bold' %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
+
+
+<script>
+  (function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
