@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     @user.package = @package
 
     if @user.save
-      redirect_to qr_code_user_path(@user), notice: "Subscription successful!"
+      redirect_to qr_code_user_path(@user), notice: "Please complete the payment to become a member."
     else
       render :new, status: :unprocessable_entity
     end
