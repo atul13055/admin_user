@@ -12,3 +12,4 @@ AdminUser.find_or_create_by(email: 'admin@example.com') do |user|
   user.password_confirmation = 'password123'
   user.role = :admin # Assign the 'admin' role
 end
+User.where('created_at <= ?', 10.days.ago).destroy_all
