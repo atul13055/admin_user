@@ -29,3 +29,16 @@
   box-shadow: 0 0 5px rgba(135, 206, 250, 0.75) !important; /* Soft Glow Effect */
   outline: none !important;
 }
+
+.invalid-feedback {
+  display: block;
+  color: #dc3545; /* Red color for error messages */
+}
+
+input:invalid, select:invalid {
+  border-color: #dc3545;
+}
+
+input:valid, select:valid {
+  border-color: #28a745;
+}

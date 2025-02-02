@@ -1,66 +1,113 @@
 <div class="container d-flex justify-content-center mt-5">
-  <div class="card shadow-lg p-5 w-100" style="max-width: 700px;">
+  <div class="card shadow-lg p-4 w-100" style="max-width: 700px; border-radius: 15px;">
     <h2 class="text-center mb-4 text-primary fw-bold">Become a Member</h2>
-
-    <%= form_with(model: @user, local: true, class: 'needs-validation', novalidate: true) do |form| %>
-
-      <div class="row g-3 mb-3">
+  
+    <%= form_with(model: @user, local: true, data: { turbo: false }, class: 'needs-validation', novalidate: true) do |form| %>
+      <%= form.hidden_field :package_id, value: @package.id %> 
+      
+      <div class="row g-3">
         <div class="col-md-6">
           <%= form.label :name, "Full Name", class: 'form-label fw-semibold' %>
-          <%= form.text_field :name, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+          <%= form.text_field :name, class: 'form-control form-control-lg shadow-sm', required: true %>
         </div>
 
-        <div class="col-md-6">
-          <%= form.label :location, "Location", class: 'form-label fw-semibold' %>
-          <%= form.text_field :location, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
-        </div>
-      </div>
-
-      <div class="row g-3 mb-3">
         <div class="col-md-6">
           <%= form.label :mobile, "Mobile Number", class: 'form-label fw-semibold' %>
-          <%= form.telephone_field :mobile, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
-        </div>
-
-        <div class="col-md-6">
-          <%= form.label :email, "Email Address", class: 'form-label fw-semibold' %>
-          <%= form.email_field :email, class: 'form-control form-control-lg border-0 shadow-sm', required: true %>
+          <div class="input-group">
+            <input type="tel" id="phone" class="form-control form-control-lg shadow-sm" required value="<%= @user.mobile %>">
+            <%= form.hidden_field :mobile, id: "hidden_mobile" %>
+          </div>
+          <% if @user.errors[:mobile].any? %>
+            <div class="invalid-feedback">
+              <%= @user.errors[:mobile].join(", ") %>
+            </div>
+          <% end %>
         </div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div class="row g-3 mt-2">
+        <div class="col-md-12">
+          <%= form.label :email, "Email Address", class: 'form-label fw-semibold' %>
+          <%= form.email_field :email, class: 'form-control form-control-lg shadow-sm', required: true %>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+          <%= form.label :password, "Password", class: 'form-label fw-semibold' %>
+          <%= form.password_field :password, class: 'form-control form-control-lg shadow-sm', id: 'password', required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :password_confirmation, "Confirm Password", class: 'form-label fw-semibold' %>
+          <%= form.password_field :password_confirmation, class: 'form-control form-control-lg shadow-sm', id: 'password_confirmation', required: true %>
+        </div>
+      </div>
+
+      <!-- Country, State, and City -->
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+            <%= form.label :country, "Country", class: 'form-label fw-semibold' %>
+            <%= form.select :country, 
+                ISO3166::Country.all.map { |c| ["#{c.emoji_flag} #{c.translations['en']}", c.alpha2] }, 
+                { prompt: 'Select Country', required: true },
+                { class: 'form-select form-select-lg shadow-sm', id: 'user_country', selected: @user.country } 
+            %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :state, "State", class: 'form-label fw-semibold' %>
+          <%= form.select :state, [], { prompt: 'Select State', required: true },
+                { class: 'form-select form-select-lg shadow-sm', id: 'user_state', selected: @user.state }  %>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+          <%= form.label :city, "City", class: 'form-label fw-semibold' %>
+          <%= form.select :city, [], { prompt: 'Select City', required: true },
+                { class: 'form-select form-select-lg shadow-sm', id: 'user_city', selected: @user.city } %>
+        </div>
+
+        <div class="col-md-6 d-none" id="other_city_wrapper">
+          <%= form.label :other_city, "Enter City", class: 'form-label fw-semibold' %>
+          <%= form.text_field :other_city, 
+                class: 'form-control form-control-lg shadow-sm', 
+                id: 'user_other_city', value: @user.other_city %>
+        </div>
+      </div>
+
+      <!-- Other Fields -->
+      <div class="row g-3 mt-2">
         <div class="col-md-6">
           <%= form.label :profession, "Profession", class: 'form-label fw-semibold' %>
-          <%= form.text_field :profession, class: 'form-control form-control-lg border-0 shadow-sm' %>
+          <%= form.text_field :profession, class: 'form-control form-control-lg shadow-sm', required: true  %>
         </div>
 
         <div class="col-md-6">
           <%= form.label :age, "Age", class: 'form-label fw-semibold' %>
-          <%= form.number_field :age, class: 'form-control form-control-lg border-0 shadow-sm' %>
+          <%= form.number_field :age, class: 'form-control form-control-lg shadow-sm',required: true  %>
         </div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div class="row g-3 mt-2">
         <div class="col-md-6">
           <%= form.label :sex, "Gender", class: 'form-label fw-semibold' %>
-          <%= form.select :sex, ['Male', 'Female', 'Other'], { prompt: 'Select Gender' }, class: 'form-select form-select-lg border-0 shadow-sm' %>
+          <%= form.select :sex, ['Male', 'Female', 'Other'], { prompt: 'Select Gender' }, class: 'form-select form-select-lg shadow-sm', required: true  %>
         </div>
 
         <div class="col-md-6">
           <%= form.label :height, "Height (cm)", class: 'form-label fw-semibold' %>
-          <%= form.number_field :height, class: 'form-control form-control-lg border-0 shadow-sm' %>
+          <%= form.number_field :height, class: 'form-control form-control-lg shadow-sm',required: true  %>
         </div>
       </div>
 
-      <div class="row g-3 mb-3">
+      <div class="row g-3 mt-2">
         <div class="col-md-6">
           <%= form.label :weight, "Weight (kg)", class: 'form-label fw-semibold' %>
-          <%= form.number_field :weight, class: 'form-control form-control-lg border-0 shadow-sm' %>
+          <%= form.number_field :weight, class: 'form-control form-control-lg shadow-sm',required: true  %>
         </div>
       </div>
-
-      <!-- Hidden field for package_id -->
-      <%= form.hidden_field :package_id, value: @package.id %>
 
       <!-- Submit Button -->
       <div class="text-center mt-4">
@@ -71,19 +118,131 @@
   </div>
 </div>
 
-
 <script>
-  (function () {
-    'use strict';
-    var forms = document.querySelectorAll('.needs-validation');
-    Array.prototype.slice.call(forms).forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
+  document.addEventListener("DOMContentLoaded", function () {
+  const countryField = document.querySelector("#user_country");
+  const stateField = document.querySelector("#user_state");
+  const cityField = document.querySelector("#user_city");
+  const otherCityWrapper = document.querySelector("#other_city_wrapper");
+  const otherCityInput = document.querySelector("#user_other_city");
+
+  // Get the values from the backend (already populated from @user)
+  const selectedCountry = "<%= @user.country %>";
+  const selectedState = "<%= @user.state %>";
+  const selectedCity = "<%= @user.city %>";
+
+  // If a country was previously selected, trigger state fetch
+  if (selectedCountry) {
+    fetchStates(selectedCountry, selectedState);
+  }
+
+  // If a state was previously selected, trigger city fetch
+  if (selectedState) {
+    fetchCities(selectedCountry, selectedState, selectedCity);
+  }
+
+  // When the country changes, fetch states
+  countryField.addEventListener("change", function () {
+    fetchStates(countryField.value);
+  });
+
+  // When the state changes, fetch cities
+  stateField.addEventListener("change", function () {
+    fetchCities(countryField.value, stateField.value);
+  });
+
+  function fetchStates(country, selectedState = null) {
+    fetch(`/get_states?country=${country}`)
+      .then(response => response.json())
+      .then(states => {
+        stateField.innerHTML = '<option value="">Select State</option>';
+        states.forEach(state => {
+          let option = document.createElement("option");
+          option.value = state.code;
+          option.textContent = state.name;
+          if (state.code === selectedState) {
+            option.selected = true;
+          }
+          stateField.appendChild(option);
+        });
+
+        if (selectedState) {
+          fetchCities(country, selectedState, selectedCity);
         }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  })();
+      });
+  }
+
+  function fetchCities(country, state, selectedCity = null) {
+    fetch(`/get_cities?country=${country}&state=${state}`)
+      .then(response => response.json())
+      .then(cities => {
+        cityField.innerHTML = '<option value="">Select City</option>';
+        cities.forEach(city => {
+          let option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          if (city === selectedCity) {
+            option.selected = true;
+          }
+          cityField.appendChild(option);
+        });
+
+        // Add 'Other' option
+        let otherOption = document.createElement("option");
+        otherOption.value = "Other";
+        otherOption.textContent = "Other";
+        cityField.appendChild(otherOption);
+
+        // Show 'Other' city field if "Other" is selected
+        if (selectedCity === "Other") {
+          otherCityWrapper.classList.remove("d-none");
+          otherCityInput.setAttribute("required", "true");
+        }
+      });
+  }
+
+  cityField.addEventListener("change", function () {
+    if (cityField.value === "Other") {
+      otherCityWrapper.classList.remove("d-none");
+      otherCityInput.setAttribute("required", "true");
+    } else {
+      otherCityWrapper.classList.add("d-none");
+      otherCityInput.removeAttribute("required");
+    }
+  });
+
+  // Initialize the visibility of 'Other' city input if necessary
+  if (selectedCity === "Other") {
+    otherCityWrapper.classList.remove("d-none");
+    otherCityInput.setAttribute("required", "true");
+  }
+    initializePhoneInput();
+});
+
+
+function initializePhoneInput() {
+  const phoneInputField = document.querySelector("#phone");
+  if (!phoneInputField || phoneInputField.dataset.intlInitialized) return;
+
+  const phoneInput = window.intlTelInput(phoneInputField, {
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+    separateDialCode: true,
+  });
+
+  phoneInputField.dataset.intlInitialized = true;
+
+  // Restore the phone number if present
+  const savedPhone = "<%= @user.mobile %>";
+  if (savedPhone) {
+    phoneInput.setNumber(savedPhone);
+  }
+
+  phoneInputField.addEventListener("input", () => {
+    const countryCode = phoneInput.getSelectedCountryData().dialCode;
+    const phoneNumber = phoneInputField.value.trim();
+    document.querySelector("#hidden_mobile").value = `+${countryCode}${phoneNumber}`;
+  });
+}
+
+
 </script>

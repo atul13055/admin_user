@@ -18,7 +18,26 @@
             <li class="list-group-item"><strong>Name:</strong> <%= @user.name %></li>
             <li class="list-group-item"><strong>Email:</strong> <%= @user.email %></li>
             <li class="list-group-item"><strong>Phone:</strong> <%= @user.mobile %></li>
-            <li class="list-group-item"><strong>Address:</strong> <%= @user.location %></li>
+            <li class="list-group-item">
+              <strong>Address:</strong>
+              <div class="address">
+                <!-- City -->
+                <span class="address-line">
+                  <%= @user.other_city.present? ? @user.other_city : @user.city %>
+                </span>
+                <!-- State -->
+                <span class="separator">, </span>
+                <span class="address-line">
+                  <%= CS.states(@user.country)[@user.state.to_sym] || "Unknown" %>
+                </span>
+                <!-- Country -->
+                <span class="separator">, </span>
+                <span class="address-line">
+                  <% country = ISO3166::Country[@user.country] %>
+                  <%= country ? "#{country.emoji_flag} #{country.translations['en']}" : "🏳️ Unknown Country" %>
+                </span>
+              </div>
+            </li>
           </ul>
         </div>
       </div>

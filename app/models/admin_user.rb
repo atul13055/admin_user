@@ -1,7 +1,8 @@
 class AdminUser < ApplicationRecord
-  # Include default devise modules except email sending ones
   devise :database_authenticatable, 
          :rememberable, :validatable, :lockable, :timeoutable, :trackable
+
+  enum role: { admin: 1 }, _default: :admin # Only admin role for AdminUser
 
   def self.ransackable_attributes(auth_object = nil)
     ["created_at", "current_sign_in_at", "current_sign_in_ip", "email", "encrypted_password", 

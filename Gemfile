@@ -75,3 +75,8 @@ gem 'activeadmin_quill_editor'
 gem 'sassc'
 gem 'byebug'
 gem "rqrcode"
+gem 'carmen'
+gem 'country_state_select'
+gem 'city-state'
+gem 'rails-intl-tel-input'
+gem "phonelib", "~> 0.10.3"

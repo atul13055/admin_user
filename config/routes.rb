@@ -12,6 +12,10 @@ Rails.application.routes.draw do
       get :qr_code, action: :show_qr
     end
   end
+  get '/users', to: redirect('/')
+  # get '/get_states', to: 'users#get_states'
+  get '/get_states', to: 'users#get_states'
+  get '/get_cities', to: 'users#get_cities'
 
   # Defines the root path route ("/")
   root "subscriptions#index"
