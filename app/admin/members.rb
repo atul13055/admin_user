@@ -22,7 +22,8 @@ actions :all, :except => :destroy
     column "Country" do |p|
       country = ISO3166::Country[p.country]
       flag = country&.emoji_flag || "🏳️"
-      "#{flag} #{country.translations['en']}".html_safe
+      country_name = country ? country.translations['en'] : 'Unknown Country'
+      "#{flag} #{country_name}".html_safe
     end
     column :state do |user|
         selected_state_name = CS.states(user.country)[user.state.to_sym]
@@ -52,7 +53,8 @@ actions :all, :except => :destroy
       row "Country" do |p|
         country = ISO3166::Country[p.country]
         flag = country&.emoji_flag || "🏳️"
-        "#{flag} #{country.translations['en']}".html_safe
+        country_name = country ? country.translations['en'] : 'Unknown Country'
+        "#{flag} #{country_name}".html_safe
       end
       row :state do |user|
           selected_state_name = CS.states(user.country)[user.state.to_sym]
@@ -77,13 +79,22 @@ actions :all, :except => :destroy
   # Form for new/edit pages
   form do |f|
     f.inputs "User Details" do
-      f.input :name
+      f.input :name, required: true
+
       if f.object.new_record?
-        f.input :email
+        f.input :email, required: true
       else
-        f.input :email, input_html: { readonly: true }
+        f.input :email, input_html: { readonly: true }, required: true
       end
-      f.input :mobile
+
+      f.input :mobile, as: :string, input_html: { 
+        id: "phone", 
+        class: "form-control", 
+        placeholder: "+91 8123456789", 
+        readonly: !f.object.new_record? 
+      }
+
+      # Country and state select inputs, if applicable
       f.input :country, 
               as: :select, 
               collection: ISO3166::Country.all.map { |c| ["#{c.emoji_flag} #{c.translations['en']}", c.alpha2] }, 
@@ -102,26 +113,36 @@ actions :all, :except => :destroy
 
       f.input :city, 
               as: :select, 
-              collection: CS.cities(f.object.state, f.object.country)&.map { |city| [city, city] },
+              collection: (CS.cities(f.object.state, f.object.country) || []).map { |city| [city, city] } + [['Other', 'Other']],
               include_blank: false, 
               prompt: "Select City", 
               selected: f.object.city, 
-              input_html: { id: "user_city", class: 'city-select' }
+              input_html: { id: "user_city", class: 'city-select', onchange: "toggleOtherCityField()" }
 
-      f.input :other_city, label: "Other City", input_html: { id: "user_other_city", class: 'form-control d-none' }
+      f.input :other_city, label: "Other City", input_html: { id: "user_other_city", class: 'form-control d-none', disabled: true }
 
-      f.input :profession
-      f.input :age
-      f.input :sex, as: :select, collection: ['Male', 'Female', 'Other'], include_blank: false
-      f.input :height
-      f.input :weight
-      f.input :role, as: :select, collection: User.roles.keys, include_blank: false
-      f.input :status, as: :select, collection: [['Active', true], ['Inactive', false]], include_blank: false
-      f.input :package, as: :select, collection: Package.all.map { |p| [p.name, p.id] }, include_blank: false
-      f.input :update_password, as: :boolean, label: "Update Password?"
-      f.input :password, label: "Password", input_html: { class: 'password-field', disabled: true }
-      f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field', disabled: true }
+      f.input :profession, required: true
+      f.input :age, required: true
+      f.input :sex, as: :select, collection: ['Male', 'Female', 'Other'], include_blank: false, required: true
+      f.input :height, required: true
+      f.input :weight, required: true
+      f.input :role, as: :select, collection: User.roles.keys, include_blank: false, required: true
+      f.input :status, as: :select, collection: [['Active', true], ['Inactive', false]], include_blank: false, required: true
+      f.input :package, as: :select, collection: Package.all.map { |p| [p.name, p.id] }, include_blank: false, required: true
+
+      if f.object.new_record?
+        f.input :password, label: "Password", input_html: { class: 'password-field'}, required: true
+        f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field' }, required: true
+      else
+        f.input :update_password, as: :boolean, label: "Update Password?"
+        if f.object.update_password?
+          f.input :password, label: "Password", input_html: { class: 'password-field' }, required: true
+          f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field' }, required: true
+        end
+      end
     end
     f.actions
   end
+
 end
+

@@ -1,10 +1,11 @@
 class User < ApplicationRecord
   belongs_to :package
 
+  # Devise handles authentication and validation for email and password
   devise :database_authenticatable, :recoverable, :rememberable, :validatable
   attr_accessor :update_password
 
-  # If the password checkbox is ticked, validate the password presence
+  # Only validate password presence if the update_password checkbox is checked
   validates :password, presence: true, if: :update_password?
 
   def update_password?
@@ -14,23 +15,31 @@ class User < ApplicationRecord
   # Enum for user role (member by default)
   enum role: { member: 0 }, _default: :member
 
-  # Validations for phone number
+  # Custom validations for mobile number
   validates :mobile, presence: true
-  
 
-  validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  # Validations for other fields (age, height, weight)
   validates :age, numericality: { greater_than_or_equal_to: 18, less_than_or_equal_to: 100 }, allow_nil: true
   validates :height, :weight, numericality: true, allow_nil: true
 
-  #  validates :country, presence: true
-  # validates :state, presence: true, if: -> { country.present? }
-  # validates :city, presence: true, if: -> { state.present? }
+  # Name validation (required)
+  validates :name, presence: true
 
-  # You can also add custom validation logic to ensure the state and city exist for the given country
+  # Optional custom validation for state and city (if applicable)
   # validate :valid_state_city_for_country
+  validate :validate_mobile_format
 
+  def validate_mobile_format
+    parsed_number = Phonelib.parse(mobile)
+    if parsed_number.valid?
+      self.mobile = parsed_number.e164  # Store the phone number in E.164 format
+    else
+      errors.add(:mobile, "Invalid phone number")  # Add an error if invalid
+    end
+  end
   private
 
+  # Optional custom validation logic for state and city
   def valid_state_city_for_country
     return unless country.present? && state.present? && city.present?
   end

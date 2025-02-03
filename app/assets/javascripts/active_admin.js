@@ -3,7 +3,32 @@
 //= require activeadmin/quill_editor_input
 // app/javascript/packs/form.js
 
-// app/javascript/packs/form.js
+
+document.addEventListener("DOMContentLoaded", function() {
+  const phoneInputField = document.querySelector("#phone");
+  if (!phoneInputField || phoneInputField.dataset.intlInitialized) return;
+
+  const phoneInput = window.intlTelInput(phoneInputField, {
+    initialCountry: "in",
+    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+    separateDialCode: true,
+  });
+
+  phoneInputField.dataset.intlInitialized = true;
+
+  // Restore the phone number if present
+  const savedPhone = phoneInputField.value;
+  if (savedPhone) {
+    phoneInput.setNumber(savedPhone);
+  }
+
+  phoneInputField.addEventListener("input", () => {
+    const countryCode = phoneInput.getSelectedCountryData().dialCode;
+    const phoneNumber = phoneInputField.value.trim();
+    document.querySelector("#hidden_mobile").value = `+${countryCode}${phoneNumber}`;
+  });
+});
+
 
 document.addEventListener("DOMContentLoaded", function () {
   const countryField = document.querySelector("#user_country");
@@ -64,17 +89,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Show/hide "Other City" input field based on city selection
-    cityField.addEventListener("change", function () {
-      if (cityField.value === "Other") {
-        otherCityWrapper.classList.remove("d-none");
-        otherCityInput.setAttribute("required", "true");
-      } else {
-        otherCityWrapper.classList.add("d-none");
-        otherCityInput.removeAttribute("required");
-      }
-    });
+    // cityField.addEventListener("change", function () {
+    //   if (cityField.value === "Other") {
+    //     otherCityWrapper.classList.remove("d-none");
+    //     otherCityInput.setAttribute("required", "true");
+    //   } else {
+    //     otherCityWrapper.classList.add("d-none");
+    //     otherCityInput.removeAttribute("required");
+    //   }
+    // });
   }
 });
+
+
+function toggleOtherCityField() {
+  const userOtherCityField = document.getElementById("user_other_city");
+  const citySelect = document.getElementById('user_city');
+  const selectedCity = citySelect.options[citySelect.selectedIndex].value;
+
+  // If 'Other' is selected, enable the additional input field
+  if (selectedCity === "Other") {
+    userOtherCityField.disabled = false;
+    userOtherCityField.focus(); // Optionally focus the input field for a better user experience
+  } else {
+    userOtherCityField.disabled = true;
+    userOtherCityField.value = ''; // Clear the input field if 'Other' is not selected
+  }
+}
+
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -95,3 +137,4 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 });
+
