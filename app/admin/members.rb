@@ -131,14 +131,12 @@ actions :all, :except => :destroy
       f.input :package, as: :select, collection: Package.all.map { |p| [p.name, p.id] }, include_blank: false, required: true
 
       if f.object.new_record?
-        f.input :password, label: "Password", input_html: { class: 'password-field'}, required: true
-        f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field' }, required: true
+        f.input :password, label: "Password", required: true
+        f.input :password_confirmation, label: "Confirm Password", required: true
       else
         f.input :update_password, as: :boolean, label: "Update Password?"
-        if f.object.update_password?
-          f.input :password, label: "Password", input_html: { class: 'password-field' }, required: true
-          f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field' }, required: true
-        end
+        f.input :password, label: "Password", input_html: { class: 'password-field' }, required: true
+        f.input :password_confirmation, label: "Confirm Password", input_html: { class: 'password-field' }, required: true
       end
     end
     f.actions
