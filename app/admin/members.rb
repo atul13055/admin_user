@@ -26,7 +26,7 @@ actions :all, :except => :destroy
       "#{flag} #{country_name}".html_safe
     end
     column :state do |user|
-        selected_state_name = CS.states(user.country)[user.state.to_sym]
+      selected_state_name = user.state.present? ? CS.states(user.country)[user.state.to_sym] : 'Unknown State'
     end
     column :city
     column :profession
@@ -57,7 +57,7 @@ actions :all, :except => :destroy
         "#{flag} #{country_name}".html_safe
       end
       row :state do |user|
-          selected_state_name = CS.states(user.country)[user.state.to_sym]
+        selected_state_name = user.state.present? ? CS.states(user.country)[user.state.to_sym] : 'Unknown State'
       end
       row :city
       row :other_city
